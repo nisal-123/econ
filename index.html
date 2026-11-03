@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Birthday Hub | University Department Celebrations</title>
+    <meta name="description" content="Campus Birthday Hub - Modern responsive web application for university students and birthday post designers.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS CDN with Custom Theme Config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f0f5fa',
+                            100: '#e1ebf5',
+                            200: '#c3d7ec',
+                            300: '#95bde0',
+                            400: '#619fd0',
+                            500: '#3b82bf',
+                            600: '#2b69a3',
+                            700: '#235484',
+                            800: '#20476e',
+                            900: '#0a192f',
+                            950: '#071120',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        handwritten: ['Caveat', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Supabase JS Client v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/calendar.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-navy-600 selection:text-white transition-colors duration-200">
+
+    <!-- ========================================================================= -->
+    <!-- NAVIGATION BAR                                                            -->
+    <!-- ========================================================================= -->
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo & Department Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="window.app.navigate('home')">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-navy-800 via-navy-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-navy-900/20 ring-2 ring-white/20">
+                        <i class="fa-solid fa-cake-candles text-xl text-amber-300"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+                                Campus <span class="text-transparent bg-clip-text bg-gradient-to-r from-navy-600 to-purple-600 dark:from-navy-400 dark:to-purple-400">Birthday Hub</span>
+                            </h1>
+                            <span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-navy-100 text-navy-800 dark:bg-navy-950/80 dark:text-navy-300 border border-navy-200 dark:border-navy-800">
+                                Dept Edition
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[240px] sm:max-w-none">
+                            Created by Nisal
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden lg:flex items-center space-x-1">
+                    <button onclick="window.app.navigate('home')" data-view="home" class="nav-link px-3.5 py-2 rounded-xl text-sm font-semibold bg-navy-50 text-navy-700 dark:bg-navy-950/60 dark:text-navy-300 transition-all">
+                        <i class="fa-solid fa-house mr-1.5 opacity-70"></i> Home
+                    </button>
+                    <button onclick="window.app.navigate('calendar')" data-view="calendar" class="nav-link px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-navy-600 dark:hover:text-white transition-all">
+                        <i class="fa-regular fa-calendar-days mr-1.5 opacity-70"></i> Calendar
+                    </button>
+                    <button onclick="window.app.navigate('portal')" data-view="portal" class="nav-link px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-navy-600 dark:hover:text-white transition-all">
+                        <i class="fa-solid fa-user-plus mr-1.5 opacity-70"></i> Submit Profile
+                    </button>
+                    <button id="nav-designer-tab" onclick="window.app.navigate('designer')" data-view="designer" class="nav-link px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-navy-600 dark:hover:text-white transition-all">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1.5 opacity-70"></i> Post Designer
+                    </button>
+                    <button id="nav-admin-tab" onclick="window.app.navigate('admin')" data-view="admin" class="nav-link px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-navy-600 dark:hover:text-white transition-all">
+                        <i class="fa-solid fa-shield-halved mr-1.5 opacity-70"></i> Admin
+                    </button>
+                </nav>
+
+                <!-- Actions: Connection Pill, Theme, Auth -->
+                <div class="flex items-center space-x-2.5">
+                    
+                    <!-- Supabase Connection Pill -->
+                    <div id="db-connection-pill" onclick="window.openModal('settings-modal')" title="Click to configure Supabase or toggle Demo Mode" class="hidden sm:flex px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 items-center space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span>Demo Mode</span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button onclick="window.app.toggleTheme()" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors" title="Toggle Light/Dark Theme">
+                        <i class="theme-toggle-icon fa-solid fa-moon"></i>
+                    </button>
+
+                    <!-- Quick Perspective / Role Switcher (No Sign In Required) -->
+                    <div class="hidden sm:flex items-center bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/60 text-xs font-semibold">
+                        <button onclick="window.authManager.switchRoleQuick('student')" id="role-pill-student" class="px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300 hover:text-navy-600 transition-colors">
+                            Student
+                        </button>
+                        <button onclick="window.authManager.switchRoleQuick('designer')" id="role-pill-designer" class="px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300 hover:text-purple-600 transition-colors">
+                            Designer
+                        </button>
+                        <button onclick="window.authManager.switchRoleQuick('admin')" id="role-pill-admin" class="px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300 hover:text-rose-600 transition-colors">
+                            Admin
+                        </button>
+                    </div>
+
+                    <!-- Settings Button -->
+                    <button onclick="window.openModal('settings-modal')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors" title="Supabase & Storage Settings">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+
+                    <!-- Mobile Hamburger Menu Button -->
+                    <button onclick="document.getElementById('mobile-nav-drawer').classList.toggle('hidden')" class="lg:hidden p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-nav-drawer" class="lg:hidden hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-2">
+            <button onclick="window.app.navigate('home')" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-house mr-2 text-navy-500"></i> Home
+            </button>
+            <button onclick="window.app.navigate('calendar')" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-regular fa-calendar-days mr-2 text-navy-500"></i> Birthday Calendar
+            </button>
+            <button onclick="window.app.navigate('portal')" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-user-plus mr-2 text-navy-500"></i> Submit Birthday Info
+            </button>
+            <button onclick="window.app.navigate('designer')" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2 text-purple-500"></i> Birthday Post Designer
+            </button>
+            <button onclick="window.app.navigate('admin')" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-shield-halved mr-2 text-rose-500"></i> Admin Dashboard
+            </button>
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="window.openModal('settings-modal')" class="w-full text-left px-4 py-2 rounded-xl text-xs text-slate-500">
+                    <i class="fa-solid fa-database mr-2"></i> Supabase Setup & Demo Controls
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: HOME (Landing Page & Celebrations Overview)                       -->
+    <!-- ========================================================================= -->
+    <main id="view-home" class="view-section flex-1">
+        
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden bg-gradient-to-b from-navy-900 via-navy-950 to-slate-950 text-white py-16 sm:py-24">
+            <!-- Background Orbs -->
+            <div class="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-purple-600/20 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-navy-500/20 blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                            <span>Official Department Birthday Platform</span>
+                        </div>
+
+                        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                            Celebrate Every <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-purple-300 to-pink-300">
+                                Campus Birthday
+                            </span> With Honor.
+                        </h2>
+
+                        <p class="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
+                            A unified, privacy-first hub for 100+ departmental students to securely submit their birthdays, and for the creative team to design captivating 1080px celebratory social media posts.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+                            <button onclick="window.app.navigate('portal')" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-xl shadow-amber-500/20 hover:scale-[1.02] transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-cake-candles"></i>
+                                <span>Submit Birthday Details</span>
+                            </button>
+                            <button onclick="window.app.navigate('calendar')" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white font-semibold text-sm transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-regular fa-calendar-check"></i>
+                                <span>Explore Birthday Calendar</span>
+                            </button>
+                        </div>
+
+                        <!-- Hero Quick Metrics -->
+                        <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-md mx-auto lg:mx-0">
+                            <div>
+                                <p id="hero-stat-total" class="text-2xl sm:text-3xl font-extrabold text-white">0</p>
+                                <p class="text-xs text-slate-400 font-medium mt-0.5">Students</p>
+                            </div>
+                            <div>
+                                <p id="hero-stat-today" class="text-2xl sm:text-3xl font-extrabold text-amber-400">0</p>
+                                <p class="text-xs text-slate-400 font-medium mt-0.5">Today's Birthdays</p>
+                            </div>
+                            <div>
+                                <p id="hero-stat-week" class="text-2xl sm:text-3xl font-extrabold text-purple-400">0</p>
+                                <p class="text-xs text-slate-400 font-medium mt-0.5">This Week</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Festive Card -->
+                    <div class="lg:col-span-5">
+                        <div class="relative mx-auto max-w-md rounded-3xl bg-gradient-to-tr from-white/10 via-white/5 to-white/0 p-1 border border-white/20 shadow-2xl backdrop-blur-xl">
+                            <div class="bg-slate-900/90 rounded-[22px] p-6 space-y-5">
+                                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div class="flex items-center space-x-2.5">
+                                        <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+                                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                    </div>
+                                    <span class="text-xs font-mono text-slate-400">Hub Spotlight</span>
+                                </div>
+
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80" 
+                                         alt="Spotlight Student" 
+                                         class="w-20 h-20 rounded-2xl object-cover ring-4 ring-amber-400/80 shadow-lg">
+                                    <div>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                                            🎉 CELEBRATING NOW
+                                        </span>
+                                        <h3 class="text-lg font-bold text-white mt-1">Kasun Tharaka</h3>
+                                        <p class="text-xs text-slate-300">Software Engineering • 2021/22</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 text-xs italic text-slate-300">
+                                    "Wishing you boundless innovation, code without bugs, and an extraordinary journey ahead!"
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between">
+                                    <button onclick="if(window.confetti) window.confetti({particleCount: 100, spread: 70})" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-colors flex items-center space-x-1.5">
+                                        <span>🎊 Throw Confetti</span>
+                                    </button>
+                                    <button onclick="window.app.navigate('designer')" class="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-semibold text-white transition-colors flex items-center space-x-1.5">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                        <span>Open in Designer</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Today's Birthday Spotlight Section -->
+        <section id="home-today-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 hidden">
+            <div id="home-today-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Upcoming Birthdays Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 gap-4">
+                <div>
+                    <h3 class="text-2xl font-black text-slate-900 dark:text-white flex items-center space-x-2">
+                        <span>Upcoming Department Celebrations</span>
+                        <i class="fa-solid fa-cake-candles text-amber-500 text-xl"></i>
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Get ready to wish your fellow department classmates on their special day.
+                    </p>
+                </div>
+                <button onclick="window.app.navigate('calendar')" class="text-sm font-semibold text-navy-600 dark:text-navy-400 hover:underline flex items-center space-x-1.5">
+                    <span>View Full Calendar</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+            <!-- 6-Card Upcoming Grid -->
+            <div id="home-upcoming-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Dynamically generated via app.js -->
+            </div>
+        </section>
+
+        <!-- Feature Pillars / How It Works -->
+        <section class="bg-slate-100/70 dark:bg-slate-900/50 py-16 border-t border-slate-200 dark:border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-xs font-bold uppercase tracking-wider text-navy-600 dark:text-navy-400">Streamlined Workflow</span>
+                    <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">How Campus Birthday Hub Works</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                        Designed specifically for university departments to eliminate missed birthdays and manual spreadsheet chaos.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-slate-200 dark:border-slate-800 shadow-sm relative group hover:border-navy-400 transition-all">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl font-bold mb-5">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-slate-400">STEP 01</span>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-1">Student Submits Details</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
+                            Students securely sign in, submit their birthday date, registration number, upload a clear profile photo (up to 5MB), and customize privacy consent.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-slate-200 dark:border-slate-800 shadow-sm relative group hover:border-purple-400 transition-all">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl font-bold mb-5">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-slate-400">STEP 02</span>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-1">Admin Reviews & Verifies</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
+                            Department administrators verify identity, approve valid submissions, request corrections for blurry photos, and manage records securely.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-slate-200 dark:border-slate-800 shadow-sm relative group hover:border-amber-400 transition-all">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl font-bold mb-5">
+                            <i class="fa-solid fa-paintbrush"></i>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-slate-400">STEP 03</span>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-1">Creative Post Studio</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
+                            The designated Birthday Post Designer selects templates (Navy Gold, Soft Purple, Fiesta), customizes greetings, and exports ultra sharp 1080px PNGs.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: BIRTHDAY CALENDAR & DIRECTORY                                     -->
+    <!-- ========================================================================= -->
+    <main id="view-calendar" class="view-section flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full hidden">
+        
+        <!-- Calendar Header -->
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 gap-4">
+            <div>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white flex items-center space-x-3">
+                    <span>Department Birthday Calendar</span>
+                    <i class="fa-regular fa-calendar text-navy-600 dark:text-navy-400 text-2xl"></i>
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    Monthly overview of all verified student birthdays and countdown tracking.
+                </p>
+            </div>
+
+            <!-- View Switcher & Navigation -->
+            <div class="flex items-center space-x-3">
+                <!-- Month Switcher Controls -->
+                <div class="flex items-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-1 shadow-sm">
+                    <button onclick="window.birthdayCalendar.prevMonth(); window.app.renderCalendarView()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <span id="cal-month-title" class="px-4 text-xs sm:text-sm font-bold text-slate-900 dark:text-white min-w-[140px] text-center">November 2026</span>
+                    <button onclick="window.birthdayCalendar.nextMonth(); window.app.renderCalendarView()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Today Button -->
+                <button onclick="window.birthdayCalendar.resetToCurrentMonth(); window.app.renderCalendarView()" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors">
+                    Today
+                </button>
+
+                <!-- Grid vs List Mode Toggle -->
+                <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                    <button onclick="window.birthdayCalendar.activeFilter.viewMode = 'grid'; window.app.renderCalendarView()" title="Month Grid" class="p-2 rounded-lg text-xs font-semibold bg-white dark:bg-slate-700 shadow-sm text-navy-600 dark:text-white">
+                        <i class="fa-solid fa-table-cells-large"></i>
+                    </button>
+                    <button onclick="window.birthdayCalendar.activeFilter.viewMode = 'list'; window.app.renderCalendarView()" title="Upcoming List" class="p-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white">
+                        <i class="fa-solid fa-list-ul"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-6">
+            <!-- Search input -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-xs text-slate-400"></i>
+                <input type="text" 
+                       id="cal-search-input" 
+                       oninput="window.birthdayCalendar.activeFilter.search = this.value; window.app.renderCalendarView()" 
+                       placeholder="Search by student name or nickname..." 
+                       class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-500">
+            </div>
+
+            <!-- Month filter -->
+            <div>
+                <select onchange="window.birthdayCalendar.activeFilter.month = this.value; window.app.renderCalendarView()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-500">
+                    <option value="all">All Birthday Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Monthly Grid View Container -->
+        <div id="cal-grid-view" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <!-- Day Headers -->
+            <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-center py-3 text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                <span>Sun</span>
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+            </div>
+
+            <!-- Days Grid Cells (Injected via JS) -->
+            <div id="cal-grid-cells" class="grid grid-cols-7 divide-x divide-y divide-slate-100 dark:divide-slate-800/70 border-b border-slate-100 dark:border-slate-800">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Upcoming List View Container -->
+        <div id="cal-list-view" class="hidden space-y-3">
+            <div id="cal-list-container" class="space-y-3">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+    </main>
+
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: STUDENT PORTAL (Submission & Self-Service Profile)                -->
+    <!-- ========================================================================= -->
+    <main id="view-portal" class="view-section flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full hidden">
+        
+        <!-- Portal Form Selector Tabs: Google Form (Direct to Google Drive) vs Campus Hub Form -->
+        <div class="flex items-center justify-center p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 mb-6 max-w-md mx-auto shadow-inner">
+            <button id="portal-tab-gform" onclick="window.studentPortal.switchPortalMode('gform')" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-navy-700 dark:text-white shadow-sm flex items-center justify-center space-x-2 transition-all">
+                <i class="fa-brands fa-google text-amber-500 text-base"></i>
+                <span>Google Form (To Drive)</span>
+            </button>
+            <button id="portal-tab-hub" onclick="window.studentPortal.switchPortalMode('hub')" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center justify-center space-x-2 transition-all">
+                <i class="fa-solid fa-cake-candles text-purple-500"></i>
+                <span>Campus Hub Form</span>
+            </button>
+        </div>
+
+        <!-- Mode 1: Embedded Google Form (100% DIRECT TO NISAL'S GOOGLE DRIVE) -->
+        <div id="portal-gform-container" class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 mb-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3 mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                        <i class="fa-brands fa-google-drive text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Save Directly to Nisal's Google Drive</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Photos and birthday details go straight into the Google Form's responses folder.</p>
+                    </div>
+                </div>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScbv2NCVvrCBsaW4sZPxl1ciXz8CietUpK3j150RUadPZGTAg/viewform?usp=header" 
+                   target="_blank" 
+                   class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-md shadow-amber-500/25 flex items-center space-x-2 transition-all">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span>Open Form in New Tab</span>
+                </a>
+            </div>
+
+            <!-- Responsive Google Form Embed -->
+            <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white min-h-[850px]">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScbv2NCVvrCBsaW4sZPxl1ciXz8CietUpK3j150RUadPZGTAg/viewform?embedded=true" 
+                        class="w-full h-[950px] border-0" 
+                        frameborder="0" 
+                        marginheight="0" 
+                        marginwidth="0">
+                    Loading Google Form…
+                </iframe>
+            </div>
+
+            <!-- Live Google Form Responses Auto-Update Banner -->
+            <div class="mt-4 p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 shadow-sm space-y-3">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-center space-x-3 text-left">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/25 text-lg">
+                            <i class="fa-solid fa-arrows-rotate gform-sync-btn-icon"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Auto-Update to Campus Birthday Hub</h4>
+                                <span id="gform-sync-status-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300">⚡ Link Google Sheet Below</span>
+                            </div>
+                            <p class="text-[11px] text-slate-600 dark:text-slate-400">Google Form එකට එන සියලුම ළමයින්ගේ නම්, උපන්දින සහ Photos මෙතනට Auto-Sync වේ!</p>
+                        </div>
+                    </div>
+                    <button onclick="window.googleSheetSync.syncNow()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/25 shrink-0 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-arrows-rotate gform-sync-btn-icon"></i>
+                        <span>Sync Now (දැන්ම Update කරන්න)</span>
+                    </button>
+                </div>
+
+                <!-- Google Sheet Link Field for Auto-Sync -->
+                <div class="pt-3 border-t border-emerald-200/60 dark:border-emerald-800/40">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-link absolute left-3 top-3 text-emerald-600 dark:text-emerald-400 text-xs"></i>
+                            <input type="url" id="portal-gform-sheet-url" 
+                                   placeholder="Google Sheet link (Google Form -> Responses -> Link to Sheets -> Share: Anyone with link can view)" 
+                                   class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-emerald-300 dark:border-emerald-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 font-mono">
+                        </div>
+                        <button onclick="window.savePortalSheetLink()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold transition-all shrink-0 flex items-center justify-center space-x-1.5 shadow">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Save Link</span>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5 flex items-center">
+                        <i class="fa-solid fa-circle-info mr-1.5 text-emerald-600"></i>
+                        <span>පියවර: Google Form එකේ <b>Responses</b> &rarr; <b>Link to Sheets</b> &rarr; Google Sheet එක <b>Share: Anyone with the link can view</b> කර link එක මෙතන paste කර Save කරන්න.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Lookup / Status Banner (Direct Access - No Login Required) -->
+        <div id="portal-hub-lookup-bar" class="hidden bg-gradient-to-r from-navy-50 to-purple-50 dark:from-navy-950/40 dark:to-purple-950/40 rounded-2xl p-4 sm:p-5 border border-navy-100 dark:border-navy-900/60 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center space-x-3 text-left w-full sm:w-auto">
+                <div class="w-10 h-10 rounded-xl bg-navy-600 text-white flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Already submitted your birthday details?</h4>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Search by your name or nickname to review status or update details.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 w-full sm:w-auto">
+                <input type="text" id="portal-lookup-id" placeholder="Enter your name..." class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs focus:ring-2 focus:ring-navy-500 w-full sm:w-48">
+                <button onclick="window.studentPortal.lookupByName(document.getElementById('portal-lookup-id').value)" class="px-4 py-2 rounded-xl bg-navy-600 hover:bg-navy-700 text-white text-xs font-semibold shrink-0 transition-colors">
+                    Find Profile
+                </button>
+            </div>
+        </div>
+
+        <!-- Student Existing Profile Status Card (shown if already submitted) -->
+        <div id="student-status-view" class="hidden">
+            <!-- Populated via student-portal.js -->
+        </div>
+
+        <!-- Student Submission / Edit Form -->
+        <div id="student-form-view" class="hidden bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 p-6 sm:p-10">
+            
+            <div class="flex items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 mb-8">
+                <div>
+                    <h3 id="form-submit-title" class="text-2xl font-black text-slate-900 dark:text-white">
+                        Submit Birthday Profile
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Please provide accurate details for the department's birthday records and social celebration posts.
+                    </p>
+                </div>
+                <button id="std-cancel-edit-btn" onclick="window.studentPortal.cancelEdit()" class="hidden px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 text-xs font-semibold">
+                    Cancel Edit
+                </button>
+            </div>
+
+            <form id="student-registration-form" class="space-y-6">
+
+                <!-- 1. Photo Upload Field (JPG, PNG, WEBP <= 5MB) -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                        Personal Profile Photo <span class="text-rose-500">*</span>
+                        <span class="text-[11px] font-normal text-slate-400 ml-1">(JPG, PNG, or WEBP &bull; Max 5 MB)</span>
+                    </label>
+
+                    <div id="photo-drop-zone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-navy-500 rounded-2xl p-6 text-center cursor-pointer transition-colors relative group">
+                        <input type="file" id="std-photo" accept="image/jpeg,image/png,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+
+                        <!-- Placeholder -->
+                        <div id="photo-upload-placeholder" class="space-y-2">
+                            <div class="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:text-navy-600 dark:group-hover:text-navy-400 flex items-center justify-center text-xl mx-auto transition-colors">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                Click to select a photo or drag and drop here
+                            </p>
+                            <p class="text-[11px] text-slate-400">
+                                A high quality, clear portrait of your face produces the best social media post!
+                            </p>
+                        </div>
+
+                        <!-- Live Photo Preview Container -->
+                        <div id="photo-preview-container" class="hidden flex flex-col sm:flex-row items-center justify-center gap-6">
+                            <div class="relative">
+                                <img id="photo-preview-img" src="" alt="Preview" class="w-28 h-28 rounded-2xl object-cover ring-4 ring-navy-500 shadow-lg">
+                                <button type="button" onclick="window.studentPortal.removePhoto()" class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs shadow hover:bg-rose-700">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div class="text-left text-xs text-slate-500 dark:text-slate-400">
+                                <p class="font-bold text-emerald-600 dark:text-emerald-400 flex items-center">
+                                    <i class="fa-solid fa-circle-check mr-1.5"></i> Photo ready for submission
+                                </p>
+                                <p class="mt-1">Click image or browse again to replace photo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Personal Information: Full Name & Nickname -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                            Full Name <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" id="std-fullname" required placeholder="e.g. Kasun Tharaka Perera" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                            Nickname / Preferred Name <span class="text-slate-400 font-normal">(Optional)</span>
+                        </label>
+                        <input type="text" id="std-preferred" placeholder="e.g. Kasun" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-500">
+                    </div>
+                </div>
+
+                <!-- 3. Birthday Date Field -->
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            Birthday Date <span class="text-rose-500">*</span>
+                        </label>
+                        <span class="text-[10px] text-slate-400">Day & Month</span>
+                    </div>
+                    <input type="date" id="std-bday" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-500">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="std-submit-btn" class="w-full py-3.5 rounded-2xl bg-navy-600 hover:bg-navy-700 text-white font-bold text-sm shadow-lg shadow-navy-600/30 transition-all flex items-center justify-center space-x-2">
+                    <i id="std-submit-spinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+                    <span id="std-submit-btn-text">Submit Birthday Details</span>
+                </button>
+
+            </form>
+        </div>
+
+    </main>
+
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 4: BIRTHDAY POST DESIGNER STUDIO                                     -->
+    <!-- ========================================================================= -->
+    <main id="view-designer" class="view-section flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full hidden">
+        
+        <!-- Workspace Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 gap-4 mb-8">
+            <div>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white flex items-center space-x-3">
+                    <span>Birthday Post Designer Studio</span>
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple-500 text-2xl"></i>
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    Design and export ultra sharp 1080px celebratory PNG graphics for social media.
+                </p>
+            </div>
+
+            <!-- Action Buttons: Download Photo, Copy, Export PNG, Lock -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="window.postDesigner.downloadOriginalPhoto()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all flex items-center space-x-1.5" title="Download the original uploaded photo of this student">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download Photo</span>
+                </button>
+                <button onclick="window.postDesigner.copyToClipboard().then(ok => window.showToast(ok ? 'Copied image to clipboard!' : 'Failed to copy', ok ? 'success' : 'error'))" class="px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors flex items-center space-x-1.5">
+                    <i class="fa-regular fa-clipboard"></i>
+                    <span>Copy</span>
+                </button>
+                <button onclick="window.postDesigner.exportPNG()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 transition-all flex items-center space-x-1.5">
+                    <i class="fa-solid fa-file-image"></i>
+                    <span>Export PNG</span>
+                </button>
+                <button onclick="window.app.lockSecurity()" title="Lock Designer workspace" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-rose-500 text-xs transition-colors">
+                    <i class="fa-solid fa-lock"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Student Selector & Post Status Task Management (4 Cols) -->
+            <div class="lg:col-span-4 space-y-5">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            Select Student
+                        </h4>
+                        <span class="text-[10px] text-slate-400">Click to load</span>
+                    </div>
+
+                    <!-- Search and filters -->
+                    <div class="space-y-2 mb-3">
+                        <input type="text" 
+                               id="designer-search-input" 
+                               oninput="window.app.renderDesignerStudentList()" 
+                               placeholder="Search name or ID..." 
+                               class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-900 dark:text-white">
+                        
+                        <select id="designer-status-filter" onchange="window.app.renderDesignerStudentList()" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-900 dark:text-white">
+                            <option value="all">All Post Statuses</option>
+                            <option value="pending">Pending Design</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="design_completed">Design Completed</option>
+                            <option value="published">Published</option>
+                        </select>
+                    </div>
+
+                    <!-- Scrollable Students List -->
+                    <div id="designer-students-list" class="space-y-2 max-h-[280px] overflow-y-auto scrollbar-thin pr-1">
+                        <!-- Injected via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Post Task & Designer Notes Form -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                        Post Task & Workflow Status
+                    </h4>
+
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-500 mb-1">Preparation Status</label>
+                        <select id="designer-task-status" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-medium">
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="design_completed">Design Completed</option>
+                            <option value="published">Published to Social Media</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-500 mb-1">Designer Progress Notes</label>
+                        <textarea id="designer-task-notes" rows="2" placeholder="e.g. Ready for Instagram square post, waiting for batch rep quote." class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs"></textarea>
+                    </div>
+
+                    <button onclick="window.app.saveDesignerTask()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-colors">
+                        Save Post Status & Notes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Middle Column: Interactive Canvas Preview (4 Cols) -->
+            <div class="lg:col-span-4 flex flex-col items-center">
+                <!-- Aspect Ratio Selector -->
+                <div class="flex items-center space-x-2 mb-4 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                    <button onclick="window.postDesigner.setFormat('square')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-700 text-navy-700 dark:text-white shadow-sm">
+                        <i class="fa-solid fa-square mr-1"></i> 1080 × 1080 (Square)
+                    </button>
+                    <button onclick="window.postDesigner.setFormat('portrait')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900">
+                        <i class="fa-solid fa-rectangle-vertical mr-1"></i> 1080 × 1350 (Portrait)
+                    </button>
+                </div>
+
+                <!-- HTML5 Canvas Preview -->
+                <div class="canvas-preview-wrapper ring-1 ring-slate-900/10 dark:ring-white/10">
+                    <canvas id="post-preview-canvas" width="1080" height="1080"></canvas>
+                </div>
+
+                <p class="text-[11px] text-slate-400 mt-3 text-center">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Rendered at ultra-high resolution (1080px) for crisp social media publishing.
+                </p>
+            </div>
+
+            <!-- Right Column: Interactive Styling & Customization Controls (4 Cols) -->
+            <div class="lg:col-span-4 space-y-5">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-100 dark:border-slate-800">
+                        Post Customization & Themes
+                    </h4>
+
+                    <!-- 1. Templates Selection -->
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-500 mb-2">Design Theme Preset</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="window.postDesigner.setTemplate('navy_gold')" class="p-2.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-navy-900 text-left text-white text-xs font-bold hover:scale-[1.02] transition-transform">
+                                <div class="w-3 h-3 rounded-full bg-amber-400 mb-1"></div>
+                                Royal Navy & Gold
+                            </button>
+                            <button onclick="window.postDesigner.setTemplate('purple_glass')" class="p-2.5 rounded-xl border border-purple-300 dark:border-purple-700 bg-purple-950 text-left text-white text-xs font-bold hover:scale-[1.02] transition-transform">
+                                <div class="w-3 h-3 rounded-full bg-purple-400 mb-1"></div>
+                                Soft Purple Glass
+                            </button>
+                            <button onclick="window.postDesigner.setTemplate('fiesta_burst')" class="p-2.5 rounded-xl border border-pink-300 dark:border-pink-700 bg-slate-900 text-left text-white text-xs font-bold hover:scale-[1.02] transition-transform">
+                                <div class="w-3 h-3 rounded-full bg-rose-500 mb-1"></div>
+                                Festive Fiesta
+                            </button>
+                            <button onclick="window.postDesigner.setTemplate('minimal_luxury')" class="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-zinc-950 text-left text-white text-xs font-bold hover:scale-[1.02] transition-transform">
+                                <div class="w-3 h-3 rounded-full bg-slate-200 mb-1"></div>
+                                Minimal Luxury
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Decorative Stickers -->
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-500 mb-2">Celebratory Stickers</label>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button data-sticker="confetti" class="ctrl-sticker-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 ring-2 ring-navy-600 bg-navy-50">
+                                🎊 Confetti
+                            </button>
+                            <button data-sticker="crown" class="ctrl-sticker-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">
+                                👑 Crown
+                            </button>
+                            <button data-sticker="hat" class="ctrl-sticker-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">
+                                🥳 Party Hat
+                            </button>
+                            <button data-sticker="balloons" class="ctrl-sticker-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">
+                                🎈 Balloons
+                            </button>
+                            <button data-sticker="cake" class="ctrl-sticker-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">
+                                🎂 Cake
+                            </button>
+                            <button data-sticker="none" class="ctrl-sticker-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">
+                                None
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Photo Shape & Adjustments -->
+                    <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <label class="block text-[11px] font-semibold text-slate-500">Photo Shape</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button data-shape="circle" class="ctrl-shape-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold ring-2 ring-navy-600 bg-navy-50">Circle</button>
+                            <button data-shape="rounded" class="ctrl-shape-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold">Rounded</button>
+                            <button data-shape="square" class="ctrl-shape-btn p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold">Square</button>
+                        </div>
+
+                        <!-- Zoom Slider -->
+                        <div>
+                            <div class="flex justify-between text-[11px] font-medium text-slate-500 mb-1">
+                                <span>Photo Zoom</span>
+                                <span class="font-mono">Adjust fit</span>
+                            </div>
+                            <input type="range" id="ctrl-zoom" min="0.6" max="2.0" step="0.05" value="1.0" class="w-full accent-navy-600">
+                        </div>
+
+                        <!-- Offset Sliders -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-400">Center X</label>
+                                <input type="range" id="ctrl-offset-x" min="-150" max="150" step="2" value="0" class="w-full accent-navy-600">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-400">Center Y</label>
+                                <input type="range" id="ctrl-offset-y" min="-150" max="150" step="2" value="0" class="w-full accent-navy-600">
+                            </div>
+                        </div>
+
+                        <!-- Direct Photo Download Button -->
+                        <button type="button" onclick="window.postDesigner.downloadOriginalPhoto()" class="w-full py-2 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold transition-colors flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download Current Student Photo</span>
+                        </button>
+                    </div>
+
+                    <!-- 4. Text Customization Fields -->
+                    <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Headline Greeting</label>
+                            <input type="text" id="ctrl-headline" value="HAPPY BIRTHDAY" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Student Name</label>
+                            <input type="text" id="ctrl-name" value="" placeholder="Student Name" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-bold">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Subtitle</label>
+                            <input type="text" id="ctrl-subtitle" value="" placeholder="e.g. Software Engineering • Batch 2021/22" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Birthday Wish Message</label>
+                            <textarea id="ctrl-wish" rows="2" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 5: ADMIN DASHBOARD                                                   -->
+    <!-- ========================================================================= -->
+    <main id="view-admin" class="view-section flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full hidden">
+        
+        <!-- Admin Dashboard Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 gap-4 mb-8">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-white">Admin Dashboard</h2>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300">
+                        Department Admin
+                    </span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    Manage student submissions, verify identity, manage birthday post workflow, and export records.
+                </p>
+            </div>
+
+            <!-- Export Buttons: Word Sheet, Calendar, Photos & CSV -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="window.googleSheetSync.syncNow()" class="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/25 transition-all flex items-center space-x-1.5" title="Pull latest submissions from linked Google Form & Sheet">
+                    <i class="fa-solid fa-arrows-rotate gform-sync-btn-icon"></i>
+                    <span>Sync Google Form</span>
+                </button>
+                <button onclick="window.wordExportService.exportAllStudents()" class="px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/25 transition-all flex items-center space-x-1.5" title="Export all students with embedded photos into Microsoft Word (.doc)">
+                    <i class="fa-solid fa-file-word text-sm"></i>
+                    <span>Export Word Sheets (.doc)</span>
+                </button>
+                <button onclick="window.googleSyncService.downloadAllIcs()" class="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-md shadow-amber-500/25 transition-all flex items-center space-x-1.5" title="Download all student birthdays with 1-day reminders to nisalmuhandiram2004@gmail.com">
+                    <i class="fa-solid fa-bell text-sm"></i>
+                    <span>Google Calendar (.ics)</span>
+                </button>
+                <button onclick="window.adminDashboard.openExportPhotosModal()" class="px-3.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-600/25 transition-all flex items-center space-x-1.5">
+                    <i class="fa-solid fa-id-card text-sm"></i>
+                    <span>Cards (PDF / Print)</span>
+                </button>
+                <button onclick="window.adminDashboard.exportCSV()" title="Export simple spreadsheet" class="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold shadow-sm transition-all flex items-center space-x-1">
+                    <i class="fa-solid fa-file-csv text-emerald-600 text-sm"></i>
+                    <span>CSV</span>
+                </button>
+                <button onclick="window.app.lockSecurity()" title="Lock Admin workspace" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-rose-500 text-xs transition-colors">
+                    <i class="fa-solid fa-lock"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Real-Time Statistics KPI Cards (Calculated from Real DB Records) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            <!-- Total Students -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Registered</span>
+                <p id="stat-total-students" class="text-2xl font-black text-slate-900 dark:text-white mt-1">0</p>
+                <span class="text-[10px] text-slate-500">~100 student target</span>
+            </div>
+
+            <!-- Verified Profiles -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Verified Profiles</span>
+                <p id="stat-verified-students" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</p>
+                <span class="text-[10px] text-slate-500">Ready for calendar</span>
+            </div>
+
+            <!-- Awaiting Approval -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-500">Awaiting Review</span>
+                <p id="stat-pending-students" class="text-2xl font-black text-amber-500 mt-1">0</p>
+                <span class="text-[10px] text-slate-500">Pending admin check</span>
+            </div>
+
+            <!-- Needs Correction -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-rose-500">Corrections</span>
+                <p id="stat-correction-students" class="text-2xl font-black text-rose-500 mt-1">0</p>
+                <span class="text-[10px] text-slate-500">Action required</span>
+            </div>
+
+            <!-- Next 7 Days -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-purple-500">Next 7 Days</span>
+                <p id="stat-upcoming-7days" class="text-2xl font-black text-purple-500 mt-1">0</p>
+                <span class="text-[10px] text-slate-500">Upcoming birthdays</span>
+            </div>
+
+            <!-- Posts Completed -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-500">Posts Prepared</span>
+                <p id="stat-completed-posts" class="text-2xl font-black text-indigo-500 mt-1">0</p>
+                <span class="text-[10px] text-slate-500">Completed or posted</span>
+            </div>
+        </div>
+
+        <!-- Student Records Management Table Container -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            
+            <!-- Filter Bar & Status Tabs -->
+            <div class="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                
+                <!-- Status Tabs -->
+                <div class="flex items-center space-x-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-thin">
+                    <button data-status="all" onclick="window.adminDashboard.setFilterStatus('all')" class="admin-tab-btn px-4 py-2 text-xs font-semibold rounded-lg bg-navy-600 text-white shadow-sm">
+                        All Records
+                    </button>
+                    <button data-status="pending" onclick="window.adminDashboard.setFilterStatus('pending')" class="admin-tab-btn px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                        Pending
+                    </button>
+                    <button data-status="approved" onclick="window.adminDashboard.setFilterStatus('approved')" class="admin-tab-btn px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                        Verified
+                    </button>
+                    <button data-status="correction_requested" onclick="window.adminDashboard.setFilterStatus('correction_requested')" class="admin-tab-btn px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                        Needs Correction
+                    </button>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-slate-400"></i>
+                    <input type="text" 
+                           oninput="window.adminDashboard.searchQuery = this.value; window.adminDashboard.renderTable()" 
+                           placeholder="Filter student or ID..." 
+                           class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-900 dark:text-white">
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto scrollbar-thin">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            <th class="py-3 px-4">Student</th>
+                            <th class="py-3 px-4">Birthday</th>
+                            <th class="py-3 px-4">Nickname</th>
+                            <th class="py-3 px-4">Review Status</th>
+                            <th class="py-3 px-4">Post Task</th>
+                            <th class="py-3 px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-students-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                        <!-- Populated via admin.js -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ========================================================================= -->
+    <!-- FOOTER                                                                    -->
+    <!-- ========================================================================= -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded-lg bg-navy-600 flex items-center justify-center text-white text-[11px]">
+                    <i class="fa-solid fa-cake-candles"></i>
+                </div>
+                <span class="font-bold text-slate-700 dark:text-slate-300">Campus Birthday Hub</span>
+                <span>&bull; Created by Nisal</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="window.openModal('settings-modal')" class="hover:text-navy-600 dark:hover:text-white">Supabase Connection</button>
+                <span>&bull;</span>
+                <span class="text-slate-400">Designed for 100+ Students</span>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 0: SECURITY PIN / PASSWORD (Designer & Admin: 0715157912)           -->
+    <!-- ========================================================================= -->
+    <div id="security-pin-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 relative text-center">
+            <button onclick="window.app.cancelSecurityPrompt()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-white text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto mb-4 text-2xl ring-8 ring-amber-500/5">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">Protected Workspace</h3>
+            <p id="security-modal-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-6">
+                Please enter the authorization password to access this workspace.
+            </p>
+
+            <form id="security-pin-form" onsubmit="window.app.submitSecurityPin(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" 
+                           id="security-pin-input" 
+                           placeholder="Enter password..." 
+                           autocomplete="current-password"
+                           class="w-full text-center tracking-widest text-lg font-mono font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-navy-600 focus:outline-none transition-all">
+                    <button type="button" 
+                            onclick="window.app.togglePinVisibility()" 
+                            class="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm p-1">
+                        <i id="security-pin-eye" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+
+                <p id="security-pin-error" class="text-xs font-semibold text-rose-500 hidden">
+                    Incorrect password! Please try again.
+                </p>
+
+                <div class="flex items-center space-x-2.5 pt-2">
+                    <button type="button" 
+                            onclick="window.app.cancelSecurityPrompt()" 
+                            class="w-1/2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="w-1/2 py-2.5 rounded-xl bg-navy-600 hover:bg-navy-700 text-white text-xs font-bold shadow-md shadow-navy-600/25 transition-all">
+                        Unlock Access
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 1: AUTHENTICATION (Sign In / Register / Demo Switcher)               -->
+    <!-- ========================================================================= -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+            <button onclick="window.closeModal('auth-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-white text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Tabs: Sign In vs Sign Up -->
+            <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6">
+                <button id="auth-tab-signin" onclick="document.getElementById('auth-form-signin').classList.remove('hidden'); document.getElementById('auth-form-signup').classList.add('hidden'); this.className='pb-3 text-sm font-bold text-navy-600 border-b-2 border-navy-600 flex-1'; document.getElementById('auth-tab-signup').className='pb-3 text-sm font-medium text-slate-500 hover:text-slate-800 flex-1';" class="pb-3 text-sm font-bold text-navy-600 border-b-2 border-navy-600 flex-1">
+                    Sign In
+                </button>
+                <button id="auth-tab-signup" onclick="document.getElementById('auth-form-signup').classList.remove('hidden'); document.getElementById('auth-form-signin').classList.add('hidden'); this.className='pb-3 text-sm font-bold text-navy-600 border-b-2 border-navy-600 flex-1'; document.getElementById('auth-tab-signin').className='pb-3 text-sm font-medium text-slate-500 hover:text-slate-800 flex-1';" class="pb-3 text-sm font-medium text-slate-500 hover:text-slate-800 flex-1">
+                    Create Account
+                </button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="auth-form-signin" onsubmit="window.authManager.handleSignIn(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
+                    <input type="email" id="auth-signin-email" required placeholder="student@campus.ac.lk" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+                    <input type="password" id="auth-signin-password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-navy-600 hover:bg-navy-700 text-white font-bold text-xs shadow-md">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="auth-form-signup" onsubmit="window.authManager.handleSignUp(event)" class="hidden space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+                    <input type="text" id="auth-signup-name" required placeholder="Kasun Tharaka" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">University Email</label>
+                    <input type="email" id="auth-signup-email" required placeholder="kasun.perera@campus.ac.lk" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Create Password</label>
+                    <input type="password" id="auth-signup-password" minlength="6" required placeholder="At least 6 characters" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-navy-600 hover:bg-navy-700 text-white font-bold text-xs shadow-md">
+                    Create Account & Continue
+                </button>
+            </form>
+
+            <!-- 1-Click Demo Login Bar -->
+            <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 text-center">
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Fast 1-Click Demo Logins</span>
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                    <button onclick="window.authManager.switchRoleQuick('student'); window.closeModal('auth-modal');" class="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">
+                        👨‍🎓 Student
+                    </button>
+                    <button onclick="window.authManager.switchRoleQuick('designer'); window.closeModal('auth-modal');" class="p-2 rounded-xl border border-purple-200 dark:border-purple-800 text-xs font-semibold hover:bg-purple-50 dark:hover:bg-purple-950/40 text-purple-600 dark:text-purple-400">
+                        🎨 Designer
+                    </button>
+                    <button onclick="window.authManager.switchRoleQuick('admin'); window.closeModal('auth-modal');" class="p-2 rounded-xl border border-rose-200 dark:border-rose-800 text-xs font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400">
+                        🛡️ Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 2: STUDENT DETAILS MODAL                                            -->
+    <!-- ========================================================================= -->
+    <div id="student-detail-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+            <button onclick="window.closeModal('student-detail-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-white text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-4 pb-5 border-b border-slate-100 dark:border-slate-800">
+                <img id="modal-std-photo" src="" alt="Student" class="w-20 h-20 rounded-2xl object-cover ring-4 ring-navy-500/20 shadow-md">
+                <div>
+                    <h3 id="modal-std-name" class="text-xl font-bold text-slate-900 dark:text-white"></h3>
+                    <p id="modal-std-pref" class="text-sm font-semibold text-purple-600 dark:text-purple-400 mt-0.5"></p>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 my-5 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Birthday Date</span>
+                    <p id="modal-std-bday" class="text-base font-bold text-slate-900 dark:text-white mt-0.5"></p>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Countdown</span>
+                    <p id="modal-std-countdown" class="text-sm font-bold text-amber-500 mt-0.5"></p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-2.5">
+                <button onclick="window.closeModal('student-detail-modal')" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold">
+                    Close
+                </button>
+                <button id="modal-std-gcal-btn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-sm">
+                    <i class="fa-brands fa-google"></i>
+                    <span>Google Calendar</span>
+                </button>
+                <button id="modal-std-word-btn" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-sm">
+                    <i class="fa-solid fa-file-word"></i>
+                    <span>Download Word (.doc)</span>
+                </button>
+                <button id="modal-std-designer-btn" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Design Post</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 3: ADMIN CORRECTION REQUEST                                         -->
+    <!-- ========================================================================= -->
+    <div id="admin-correction-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+            <button onclick="window.closeModal('admin-correction-modal')" class="absolute top-5 right-5 text-slate-400 text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Request Correction</h3>
+            <p class="text-xs text-slate-500 mt-1">
+                Send feedback to <span id="correction-student-name" class="font-bold text-slate-700 dark:text-slate-300"></span> explaining what needs to be fixed.
+            </p>
+
+            <div class="mt-4">
+                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Feedback Note to Student</label>
+                <textarea id="correction-notes" rows="4" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-xs"></textarea>
+            </div>
+
+            <div class="mt-5 flex items-center justify-end space-x-2">
+                <button onclick="window.closeModal('admin-correction-modal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+                    Cancel
+                </button>
+                <button onclick="window.adminDashboard.submitCorrection()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold">
+                    Send Correction Request
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 4: ADMIN EDIT STUDENT MODAL                                         -->
+    <!-- ========================================================================= -->
+    <div id="admin-edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+            <button onclick="window.closeModal('admin-edit-modal')" class="absolute top-5 right-5 text-slate-400 text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-base font-bold text-slate-900 dark:text-white pb-3 border-b border-slate-100 dark:border-slate-800">
+                Edit Student Information
+            </h3>
+
+            <form onsubmit="window.adminDashboard.saveEditedStudent(event)" class="space-y-4 mt-4">
+                <input type="hidden" id="edit-std-id">
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-500">Full Name</label>
+                    <input type="text" id="edit-std-fullname" required class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs sm:text-sm">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-500">Nickname / Preferred Name</label>
+                    <input type="text" id="edit-std-preferred" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs sm:text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500">Birthday Date</label>
+                        <input type="date" id="edit-std-bday" required class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs sm:text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500">Review Status</label>
+                        <select id="edit-std-status" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs sm:text-sm">
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved & Verified</option>
+                            <option value="correction_requested">Correction Requested</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-3 flex justify-end space-x-2">
+                    <button type="button" onclick="window.closeModal('admin-edit-modal')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-navy-600 hover:bg-navy-700 text-white text-xs font-semibold">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 5: SUPABASE BACKEND SETTINGS & DEMO MODE                            -->
+    <!-- ========================================================================= -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+            <button onclick="window.closeModal('settings-modal')" class="absolute top-5 right-5 text-slate-400 text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 pb-4 border-b border-slate-100 dark:border-slate-800 mb-5">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">Supabase Connection Settings</h3>
+                    <p class="text-xs text-slate-500">Connect your Supabase project or toggle Demo Mode</p>
+                </div>
+            </div>
+
+            <!-- Configuration Form -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        Supabase Project URL
+                    </label>
+                    <input type="url" id="cfg-supabase-url" placeholder="https://xyzcompany.supabase.co" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        Supabase Anon Public API Key
+                    </label>
+                    <input type="password" id="cfg-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm font-mono">
+                </div>
+
+                <div class="pt-2 flex items-center justify-between">
+                    <button onclick="window.saveSupabaseConfig()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow transition-all">
+                        Connect Supabase
+                    </button>
+                    <button onclick="window.toggleDemoMode()" class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 text-xs font-semibold transition-all">
+                        Toggle Demo Mode
+                    </button>
+                </div>
+            </div>
+
+            <!-- Google Calendar & Drive Automation (nisalmuhandiram2004@gmail.com) -->
+            <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-brands fa-google"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white">Google Drive & Calendar Automation</h4>
+                        <p class="text-[11px] text-slate-500">Auto-creates student folder & 1-day reminders for <b class="text-navy-600 dark:text-navy-400">nisalmuhandiram2004@gmail.com</b></p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        Google Apps Script Webhook URL (Optional Auto-Sync)
+                    </label>
+                    <input type="url" id="cfg-google-webhook" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-mono">
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <button onclick="window.saveGoogleWebhookConfig()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow transition-all">
+                        Save Google Webhook
+                    </button>
+                    <button onclick="window.copyGoogleScriptCode()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Copy Apps Script Code</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Google Form & Sheet Live Auto-Sync Section -->
+            <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-arrows-rotate gform-sync-btn-icon"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white">Google Form & Sheet Live Auto-Sync</h4>
+                        <p class="text-[11px] text-slate-500">Auto-pulls student responses & photos from Google Form into Campus Hub</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        Connected Google Form
+                    </label>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" readonly value="https://docs.google.com/forms/d/e/1FAIpQLScbv2NCVvrCBsaW4sZPxl1ciXz8CietUpK3j150RUadPZGTAg/viewform" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-xs font-mono text-slate-600 dark:text-slate-300">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLScbv2NCVvrCBsaW4sZPxl1ciXz8CietUpK3j150RUadPZGTAg/viewform" target="_blank" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold shrink-0">
+                            Open Form
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        Linked Google Sheet URL (Responses)
+                    </label>
+                    <input type="url" id="cfg-google-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-mono">
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                        <i class="fa-solid fa-circle-info text-emerald-600 mr-1"></i>
+                        In Google Form, click <b>Responses</b> &rarr; <b>Link to Sheets</b>. In Sheet, click <b>Share</b> &rarr; <b>Anyone with link can view</b> & paste link here.
+                    </p>
+                </div>
+
+                <div class="pt-1 flex items-center justify-between">
+                    <button onclick="window.saveGoogleSheetConfig()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow transition-all flex items-center space-x-1.5">
+                        <i class="fa-solid fa-arrows-rotate gform-sync-btn-icon"></i>
+                        <span>Save & Auto-Sync Sheet</span>
+                    </button>
+                    <button onclick="window.googleSheetSync.syncNow()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold">
+                        Sync Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seed & Reset Section -->
+            <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <span class="text-xs text-slate-500">Reset local demo test data:</span>
+                <button onclick="localStorage.removeItem('campus_bday_local_students'); localStorage.removeItem('campus_bday_local_tasks'); location.reload();" class="text-xs font-semibold text-rose-500 hover:underline">
+                    Reset Demo Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 6: EXPORT WITH PHOTOS & PRINTABLE DIRECTORY                         -->
+    <!-- ========================================================================= -->
+    <div id="admin-export-photos-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div id="admin-export-modal-panel" class="bg-white dark:bg-slate-900 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[90vh] flex flex-col">
+            
+            <!-- Modal Header (no-print) -->
+            <div class="no-print flex flex-col sm:flex-row items-start sm:items-center justify-between pb-5 border-b border-slate-200 dark:border-slate-800 gap-4 shrink-0">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-xl font-black text-slate-900 dark:text-white">Student Birthday Records with Photos</h3>
+                        <span id="export-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300">0 Profiles</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Each person's details and photo formatted into individual cards.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                    <button onclick="window.wordExportService.exportAllStudents()" class="px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition-all flex items-center space-x-1.5" title="Download Word Document with all student photos">
+                        <i class="fa-solid fa-file-word"></i>
+                        <span>Download Word (.doc)</span>
+                    </button>
+                    <button onclick="window.adminDashboard.printDirectory()" class="px-3.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow transition-all flex items-center space-x-1.5">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Print / Save as PDF</span>
+                    </button>
+                    <button onclick="window.adminDashboard.downloadHTMLDossier()" class="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all flex items-center space-x-1.5">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <span>HTML Report</span>
+                    </button>
+                    <button onclick="window.closeModal('admin-export-photos-modal')" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-500 text-xs">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cards Container (Scrollable on screen, full on print) -->
+            <div class="overflow-y-auto scrollbar-thin mt-5 flex-1 pr-1">
+                <div id="admin-export-cards-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Populated via admin.js -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 6: GOOGLE FORM RESPONSES SHEET CONNECTION GUIDE                    -->
+    <!-- ========================================================================= -->
+    <div id="gform-sync-guide-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+            <button onclick="window.closeModal('gform-sync-guide-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-white text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 pb-4 border-b border-slate-100 dark:border-slate-800 mb-5">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0 shadow-sm">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">Connect Google Form to Campus Hub</h3>
+                    <p class="text-xs text-slate-500">Google Form එකේ තොරතුරු Hub එකට Auto-Sync කරගැනීම</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                <p class="leading-relaxed">
+                    Google Security නීති අනුව Google Form එකේ data කියවිය හැක්කේ එම Form එකට සම්බන්ධ <b>Google Sheet</b> එක හරහා පමණි. මෙය ඉතා පහසුයි:
+                </p>
+
+                <!-- Step 1 Button -->
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
+                    <span class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">පියවර 1: Responses Tab එක විවෘත කරන්න</span>
+                    <a href="https://docs.google.com/forms/d/1FAIpQLScbv2NCVvrCBsaW4sZPxl1ciXz8CietUpK3j150RUadPZGTAg/edit#responses" 
+                       target="_blank" 
+                       class="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-600/25 flex items-center justify-center space-x-2 transition-all">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        <span>Open Form Responses in Google (Click Here)</span>
+                    </a>
+                    <p class="text-[11px] text-slate-500">එහි ඇති කොළ පැහැති <b>"Link to Sheets"</b> අයිකන් එක click කරන්න. එවිට අලුත් Google Sheet එකක් හැදේ.</p>
+                </div>
+
+                <!-- Step 2 Input -->
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
+                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">පියවර 2: Sheet එකේ Link එක මෙතනට දමන්න</span>
+                    <p class="text-[11px] text-slate-500">හැදුණු Sheet එකේ උඩ දකුණේ <b>Share</b> ගොස් <b>Anyone with link can view</b> කර link එක paste කරන්න:</p>
+                    <div class="flex gap-2">
+                        <input type="url" id="modal-gform-sheet-input" placeholder="https://docs.google.com/spreadsheets/d/.../edit" class="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono">
+                        <button onclick="window.saveGuideModalSheetLink()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow transition-all shrink-0">
+                            Save & Sync
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alternative Tip -->
+                <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs">
+                    <i class="fa-solid fa-lightbulb text-amber-500 mr-1.5"></i>
+                    <b>විකල්ප පහසු ක්‍රමය:</b> Google Form එකක් නැතුව කෙලින්ම අපගේ <b>"Campus Hub Form"</b> එක භාවිතා කළ හැක. කිසිම Google Sheet එකක් හෝ Sync බොත්තමක් අවශ්‍ය නැත — ළමයින් විස්තර දැමූ සැණින් ඔටෝම Calendar සහ Designer එකට වැටේ!
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- TOAST NOTIFICATION CONTAINER                                              -->
+    <!-- ========================================================================= -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none max-w-sm w-full">
+        <!-- Injected dynamically via window.showToast() -->
+    </div>
+
+
+    <!-- Settings Modal Handlers -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlInput = document.getElementById('cfg-supabase-url');
+            const keyInput = document.getElementById('cfg-supabase-key');
+            const ghookInput = document.getElementById('cfg-google-webhook');
+            const sheetInput = document.getElementById('cfg-google-sheet-url');
+            const portalSheetInput = document.getElementById('portal-gform-sheet-url');
+
+            if (urlInput) urlInput.value = window.APP_CONFIG.getUrl();
+            if (keyInput) keyInput.value = window.APP_CONFIG.getKey();
+            if (ghookInput) ghookInput.value = window.APP_CONFIG.getGoogleWebhookUrl();
+
+            const currentSheetUrl = window.APP_CONFIG.getGoogleSheetUrl();
+            if (sheetInput) sheetInput.value = currentSheetUrl;
+            if (portalSheetInput) portalSheetInput.value = currentSheetUrl;
+        });
+
+        window.saveGoogleSheetConfig = function() {
+            const input = document.getElementById('cfg-google-sheet-url');
+            const url = input ? input.value.trim() : '';
+            window.APP_CONFIG.setGoogleSheetUrl(url);
+
+            const portalInput = document.getElementById('portal-gform-sheet-url');
+            if (portalInput) portalInput.value = url;
+
+            if (url) {
+                window.showToast("Google Sheet link saved! Fetching submissions...", "success");
+                if (window.googleSheetSync) {
+                    window.googleSheetSync.syncResponses(true);
+                }
+            } else {
+                window.showToast("Google Sheet link cleared.", "info");
+                if (window.googleSheetSync) {
+                    window.googleSheetSync.updateSyncIndicators(false);
+                }
+            }
+        };
+
+        window.savePortalSheetLink = function() {
+            const input = document.getElementById('portal-gform-sheet-url');
+            const url = input ? input.value.trim() : '';
+            window.APP_CONFIG.setGoogleSheetUrl(url);
+
+            const cfgInput = document.getElementById('cfg-google-sheet-url');
+            if (cfgInput) cfgInput.value = url;
+
+            if (url) {
+                window.showToast("Google Sheet link saved! Live auto-sync started...", "success");
+                if (window.googleSheetSync) {
+                    window.googleSheetSync.syncResponses(true);
+                }
+            } else {
+                window.showToast("Please enter a valid Google Sheet link.", "warning");
+            }
+        };
+
+        window.saveGuideModalSheetLink = function() {
+            const input = document.getElementById('modal-gform-sheet-input');
+            const url = input ? input.value.trim() : '';
+            if (!url) {
+                window.showToast("Please paste the Google Sheet link.", "warning");
+                return;
+            }
+            if (url.includes('/forms/')) {
+                window.showToast("This is still the Google Form link! Please click Step 1 above, click 'Link to Sheets' and copy the Sheet URL.", "warning");
+                return;
+            }
+            window.APP_CONFIG.setGoogleSheetUrl(url);
+            window.closeModal('gform-sync-guide-modal');
+            window.showToast("Google Sheet connected! Fetching submissions...", "success");
+            if (window.googleSheetSync) {
+                window.googleSheetSync.syncResponses(true);
+            }
+        };
+
+        window.saveSupabaseConfig = function() {
+            const url = document.getElementById('cfg-supabase-url').value.trim();
+            const key = document.getElementById('cfg-supabase-key').value.trim();
+
+            if (!url || !key) {
+                window.showToast("Please enter both Supabase URL and anon API Key.", "warning");
+                return;
+            }
+
+            window.APP_CONFIG.saveCredentials(url, key);
+            window.showToast("Supabase configuration saved! Reloading...", "success");
+            setTimeout(() => location.reload(), 1000);
+        };
+
+        window.saveGoogleWebhookConfig = function() {
+            const hookInput = document.getElementById('cfg-google-webhook');
+            const url = hookInput ? hookInput.value.trim() : '';
+            window.APP_CONFIG.setGoogleWebhookUrl(url);
+            window.showToast(url ? "Google Webhook URL saved! Student details will auto-sync to Drive & Calendar." : "Google Webhook URL cleared.", "success");
+        };
+
+        window.copyGoogleScriptCode = function() {
+            if (!window.googleSyncService) return;
+            const code = window.googleSyncService.getAppsScriptCode();
+            navigator.clipboard.writeText(code).then(() => {
+                window.showToast("Google Apps Script code copied to clipboard! Paste into script.google.com.", "success");
+            }).catch(() => {
+                window.showToast("Failed to copy code automatically. Check console.", "error");
+            });
+        };
+
+        window.saveGoogleFormPrefilledLink = function() {
+            const input = document.getElementById('cfg-google-form-prefilled');
+            const url = input ? input.value.trim() : '';
+            if (!url) {
+                window.showToast("Please paste the pre-filled link from Google Forms.", "warning");
+                return;
+            }
+            if (!window.googleFormService) return;
+
+            const res = window.googleFormService.parseAndSavePrefilledLink(url);
+            if (res.success) {
+                window.showToast(`Found ${res.count} field entries! Google Form mapping updated.`, "success");
+                const statusEl = document.getElementById('gform-status-text');
+                if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> Mapped (${res.count} fields)`;
+            } else {
+                window.showToast(res.message || "Could not parse entry IDs.", "error");
+            }
+        };
+
+        window.toggleDemoMode = function() {
+            const current = window.APP_CONFIG.isDemoMode();
+            window.APP_CONFIG.setDemoMode(!current);
+            window.showToast(`Demo mode turned ${!current ? 'ON' : 'OFF'}. Reloading...`, "info");
+            setTimeout(() => location.reload(), 800);
+        };
+    </script>
+
+    <!-- Project JavaScript Modules -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/google-service.js"></script>
+    <script src="js/google-form.js"></script>
+    <script src="js/google-sheet-sync.js"></script>
+    <script src="js/word-export.js"></script>
+    <script src="js/designer.js"></script>
+    <script src="js/student-portal.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
